@@ -7,8 +7,9 @@ class PropertyReservation < ApplicationRecord
   validates :code, uniqueness: true
   validate :end_date_greater_than_start_date
   validate :start_date_in_the_future
+  validate :validates_cancel_date
 
-  enum status: { pending: 5, accepted: 10, rejected: 20 }
+  enum status: { pending: 5, accepted: 10, rejected: 20, canceled: 30 }
 
   private
 
@@ -26,6 +27,10 @@ class PropertyReservation < ApplicationRecord
   end
 
   def start_date_in_the_future
-    errors.add(:start_date, 'não pode ser em datas passadas') if start_date < Date.today
+    errors.add(:start_date, 'não pode ser em datas passadas') if start_date < Date.current
+  end
+
+  def validates_cancel_date
+    errors.add(:start_date, 'Data de cancelamento não permitida!') if canceled? && !(Date.current < start_date)
   end
 end

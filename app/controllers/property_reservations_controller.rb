@@ -21,6 +21,17 @@ class PropertyReservationsController < ApplicationController
     redirect_to @property_reservation.property
   end
 
+  def cancel
+    @property_reservation = PropertyReservation.find(params[:id])
+
+    begin
+      @property_reservation.canceled!
+      redirect_to @property_reservation.property, notice: 'Reserva cancelada com sucesso!'
+    rescue ActiveRecord::RecordInvalid
+      redirect_to @property_reservation, notice: 'Data de cancelamento não permitida!'
+    end
+  end
+
   private
 
   def property_reservation_params
